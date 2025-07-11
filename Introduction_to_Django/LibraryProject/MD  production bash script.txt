@@ -1,0 +1,243 @@
+MD OF ORIGINAL PROTEINS
+
+#Before starting, make sure all your .pdb files are in your workind directory, in this case working directory is “MDG”.
+# List of proteins=("CHRONIC" "KF475983" "KF476023" "KF476003" "KF475987" "KF476021" "KF476022" "KF476014" "ZDGM8654" "ZDGM4176" "ZDGM6438" "ZDGM7541" "ZDGM8624" "ZDGM2008" "Wildtype") # These are  PDB protein  files
+
+
+#Step 1:  Create topology file
+gmx pdb2gmx -f CHRONIC.pdb -o CHRONIC.gro -ignh
+gmx pdb2gmx -f KF475983.pdb -o KF475983.gro -ignh
+gmx pdb2gmx -f KF476023.pdb -o KF476023.gro -ignh
+gmx pdb2gmx -f KF476003.pdb -o KF476003.gro -ignh
+gmx pdb2gmx -f KF475987.pdb -o KF475987.gro -ignh
+gmx pdb2gmx -f KF476021.pdb -o KF476021.gro -ignh
+gmx pdb2gmx -f KF476022.pdb -o KF476022.gro -ignh
+gmx pdb2gmx -f KF476014.pdb -o KF476014.gro -ignh
+gmx pdb2gmx -f ZDGM8654.pdb -o ZDGM8654.gro -ignh
+gmx pdb2gmx -f ZDGM4176.pdb -o ZDGM4176.gro -ignh
+gmx pdb2gmx -f ZDGM6438.pdb -o ZDGM6438.gro -ignh
+gmx pdb2gmx -f ZDGM7541.pdb -o ZDGM7541.gro -ignh
+gmx pdb2gmx -f ZDGM8624.pdb -o ZDGM8624.gro -ignh
+gmx pdb2gmx -f ZDGM2008.pdb -o ZDGM2008.gro -ignh
+
+#Step 2: Define the simulation box
+gmx editconf -f CHRONIC.gro -o CHRONIC_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF475983.gro -o KF475983_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF476023.gro -o KF476023_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF476003.gro -o KF476003_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF475987.gro -o KF475987_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF476021.gro -o KF476021_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF476022.gro -o KF476022_newbox.gro -bt cubic -d 1.0
+gmx editconf -f KF476014.gro -o KF476014_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM8654.gro -o ZDGM8654_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM4176.gro -o ZDGM4176_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM6438.gro -o ZDGM6438_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM7541.gro -o ZDGM7541_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM8624.gro -o ZDGM8624_newbox.gro -bt cubic -d 1.0
+gmx editconf -f ZDGM2008.gro -o ZDGM2008_newbox.gro -bt cubic -d 1.0
+
+#Step 3: # Perform solvation
+gmx solvate -cp CHRONIC_newbox.gro -cs spc216.gro -p CHRONIC_topol.top -o CHRONIC_solv.gro
+gmx solvate -cp KF475983_newbox.gro -cs spc216.gro -p KF475983_topol.top -o KF475983_solv.gro
+gmx solvate -cp KF476023_newbox.gro -cs spc216.gro -p KF476023_topol.top -o KF476023_solv.gro
+gmx solvate -cp KF476003_newbox.gro -cs spc216.gro -p KF476003_topol.top -o KF476003_solv.gro
+gmx solvate -cp KF475987_newbox.gro -cs spc216.gro -p KF475987_topol.top -o KF475987_solv.gro
+gmx solvate -cp KF476021_newbox.gro -cs spc216.gro -p KF476021_topol.top -o KF476021_solv.gro
+gmx solvate -cp KF476022_newbox.gro -cs spc216.gro -p KF476022_topol.top -o KF476022_solv.gro
+gmx solvate -cp KF476014_newbox.gro -cs spc216.gro -p KF476014_topol.top -o KF476014_solv.gro
+gmx solvate -cp ZDGM8654_newbox.gro -cs spc216.gro -p ZDGM8654_topol.top -o ZDGM8654_solv.gro
+gmx solvate -cp ZDGM4176_newbox.gro -cs spc216.gro -p ZDGM4176_topol.top -o ZDGM4176_solv.gro
+gmx solvate -cp ZDGM6438_newbox.gro -cs spc216.gro -p ZDGM6438_topol.top -o ZDGM6438_solv.gro
+gmx solvate -cp ZDGM7541_newbox.gro -cs spc216.gro -p ZDGM7541_topol.top -o ZDGM7541_solv.gro
+gmx solvate -cp ZDGM8624_newbox.gro -cs spc216.gro -p ZDGM8624_topol.top -o ZDGM8624_solv.gro
+gmx solvate -cp ZDGM2008_newbox.gro -cs spc216.gro -p ZDGM2008_topol.top -o ZDGM2008_solv.gro
+
+#Step 4: # Add ions to neutralize the system
+gmx grompp -f ions.mdp -c CHRONIC_solv.gro -p CHRONIC_topol.top -o CHRONIC_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF475983_solv.gro -p KF475983_topol.top -o KF475983_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF476023_solv.gro -p KF476023_topol.top -o KF476023_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF476003_solv.gro -p KF476003_topol.top -o KF476003_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF475987_solv.gro -p KF475987_topol.top -o KF475987_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF476021_solv.gro -p KF476021_topol.top -o KF476021_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF476022_solv.gro -p KF476022_topol.top -o KF476022_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c KF476014_solv.gro -p KF476014_topol.top -o KF476014_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM8654_solv.gro -p ZDGM8654_topol.top -o ZDGM8654_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM4176_solv.gro -p ZDGM4176_topol.top -o ZDGM4176_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM6438_solv.gro -p ZDGM6438_topol.top -o ZDGM6438_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM7541_solv.gro -p ZDGM7541_topol.top -o ZDGM7541_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM8624_solv.gro -p ZDGM8624_topol.top -o ZDGM8624_ions.tpr -maxwarn 1
+gmx grompp -f ions.mdp -c ZDGM2008_solv.gro -p ZDGM2008_topol.top -o ZDGM2008_ions.tpr -maxwarn 1
+
+
+gmx genion -s CHRONIC_ions.tpr -o CHRONIC_neutralized.gro -p CHRONIC_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF475983_ions.tpr -o KF475983_neutralized.gro -p KF475983_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476023_ions.tpr -o KF476023_neutralized.gro -p KF476023_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476003_ions.tpr -o KF476003_neutralized.gro -p KF476003_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF475987_ions.tpr -o KF475987_neutralized.gro -p KF475987_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476021_ions.tpr -o KF476021_neutralized.gro -p KF476021_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476022_ions.tpr -o KF476022_neutralized.gro -p KF476022_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476014_ions.tpr -o KF476014_neutralized.gro -p KF476014_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM8654_ions.tpr -o ZDGM8654_neutralized.gro -p ZDGM8654_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM4176_ions.tpr -o ZDGM4176_neutralized.gro -p ZDGM4176_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM6438_ions.tpr -o ZDGM6438_neutralized.gro -p ZDGM6438_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM7541_ions.tpr -o ZDGM7541_neutralized.gro -p ZDGM7541_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM8624_ions.tpr -o ZDGM8624_neutralized.gro -p ZDGM8624_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM2008_ions.tpr -o ZDGM2008_neutralized.gro -p ZDGM2008_topol.top -pname NA -nname CL -neutral
+
+
+gmx grompp -f ions.mdp -c CHRONIC_neutralized.gro -p CHRONIC_topol.top -o CHRONIC_ions.tpr
+gmx grompp -f ions.mdp -c KF475983_neutralized.gro -p KF475983_topol.top -o KF475983_ions.tpr
+gmx grompp -f ions.mdp -c KF476023_neutralized.gro -p KF476023_topol.top -o KF476023_ions.tpr
+gmx grompp -f ions.mdp -c KF476003_neutralized.gro -p KF476003_topol.top -o KF476003_ions.tpr
+gmx grompp -f ions.mdp -c KF475987_neutralized.gro -p KF475987_topol.top -o KF475987_ions.tpr
+gmx grompp -f ions.mdp -c KF476021_neutralized.gro -p KF476021_topol.top -o KF476021_ions.tpr
+gmx grompp -f ions.mdp -c KF476022_neutralized.gro -p KF476022_topol.top -o KF476022_ions.tpr
+gmx grompp -f ions.mdp -c KF476014_neutralized.gro -p KF476014_topol.top -o KF476014_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM8654_neutralized.gro -p ZDGM8654_topol.top -o ZDGM8654_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM4176_neutralized.gro -p ZDGM4176_topol.top -o ZDGM4176_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM6438_neutralized.gro -p ZDGM6438_topol.top -o ZDGM6438_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM7541_neutralized.gro -p ZDGM7541_topol.top -o ZDGM7541_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM8624_neutralized.gro -p ZDGM8624_topol.top -o ZDGM8624_ions.tpr
+gmx grompp -f ions.mdp -c ZDGM2008_neutralized.gro -p ZDGM2008_topol.top -o ZDGM2008_ions.tpr
+
+gmx genion -s CHRONIC_ions.tpr -o CHRONIC_solv_ions.gro -p CHRONIC_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF475983_ions.tpr -o KF475983_solv_ions.gro -p KF475983_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476023_ions.tpr -o KF476023_solv_ions.gro -p KF476023_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476003_ions.tpr -o KF476003_solv_ions.gro -p KF476003_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF475987_ions.tpr -o KF475987_solv_ions.gro -p KF475987_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476021_ions.tpr -o KF476021_solv_ions.gro -p KF476021_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476022_ions.tpr -o KF476022_solv_ions.gro -p KF476022_topol.top -pname NA -nname CL -neutral
+gmx genion -s KF476014_ions.tpr -o KF476014_solv_ions.gro -p KF476014_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM8654_ions.tpr -o ZDGM8654_solv_ions.gro -p ZDGM8654_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM4176_ions.tpr -o ZDGM4176_solv_ions.gro -p ZDGM4176_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM6438_ions.tpr -o ZDGM6438_solv_ions.gro -p ZDGM6438_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM7541_ions.tpr -o ZDGM7541_solv_ions.gro -p ZDGM7541_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM8624_ions.tpr -o ZDGM8624_solv_ions.gro -p ZDGM8624_topol.top -pname NA -nname CL -neutral
+gmx genion -s ZDGM2008_ions.tpr -o ZDGM2008_solv_ions.gro -p ZDGM2008_topol.top -pname NA -nname CL -neutral
+
+#Step 5: Energy minimization
+gmx grompp -f minim.mdp -c CHRONIC_solv_ions.gro -p CHRONIC_topol.top -o CHRONIC_em.tpr
+gmx grompp -f minim.mdp -c KF475983_solv_ions.gro -p KF475983_topol.top -o KF475983_em.tpr
+gmx grompp -f minim.mdp -c KF476023_solv_ions.gro -p KF476023_topol.top -o KF476023_em.tpr
+gmx grompp -f minim.mdp -c KF476003_solv_ions.gro -p KF476003_topol.top -o KF476003_em.tpr
+gmx grompp -f minim.mdp -c KF475987_solv_ions.gro -p KF475987_topol.top -o KF475987_em.tpr
+gmx grompp -f minim.mdp -c KF476021_solv_ions.gro -p KF476021_topol.top -o KF476021_em.tpr
+gmx grompp -f minim.mdp -c KF476022_solv_ions.gro -p KF476022_topol.top -o KF476022_em.tpr
+gmx grompp -f minim.mdp -c KF476014_solv_ions.gro -p KF476014_topol.top -o KF476014_em.tpr
+gmx grompp -f minim.mdp -c ZDGM8654_solv_ions.gro -p ZDGM8654_topol.top -o ZDGM8654_em.tpr
+gmx grompp -f minim.mdp -c ZDGM4176_solv_ions.gro -p ZDGM4176_topol.top -o ZDGM4176_em.tpr
+gmx grompp -f minim.mdp -c ZDGM6438_solv_ions.gro -p ZDGM6438_topol.top -o ZDGM6438_em.tpr
+gmx grompp -f minim.mdp -c ZDGM7541_solv_ions.gro -p ZDGM7541_topol.top -o ZDGM7541_em.tpr
+gmx grompp -f minim.mdp -c ZDGM8624_solv_ions.gro -p ZDGM8624_topol.top -o ZDGM8624_em.tpr
+gmx grompp -f minim.mdp -c ZDGM2008_solv_ions.gro -p ZDGM2008_topol.top -o ZDGM2008_em.tpr
+
+
+gmx mdrun -v -deffnm CHRONIC_em
+gmx mdrun -v -deffnm KF475983_em
+gmx mdrun -v -deffnm KF476023_em
+gmx mdrun -v -deffnm KF476003_em
+gmx mdrun -v -deffnm KF475987_em
+gmx mdrun -v -deffnm KF476021_em
+gmx mdrun -v -deffnm KF476022_em
+gmx mdrun -v -deffnm KF476014_em
+gmx mdrun -v -deffnm ZDGM8654_em
+gmx mdrun -v -deffnm ZDGM4176_em
+gmx mdrun -v -deffnm ZDGM6438_em
+gmx mdrun -v -deffnm ZDGM7541_em
+gmx mdrun -v -deffnm ZDGM8624_em
+gmx mdrun -v -deffnm ZDGM2008_em
+
+gmx grompp -f nvt.mdp -c CHRONIC_em.gro -r CHRONIC_em.gro -p CHRONIC_topol.top -o CHRONIC_nvt.tpr
+gmx grompp -f nvt.mdp -c KF475983_em.gro -r KF475983_em.gro -p KF475983_topol.top -o KF475983_nvt.tpr
+gmx grompp -f nvt.mdp -c KF476023_em.gro -r KF476023_em.gro -p KF476023_topol.top -o KF476023_nvt.tpr
+gmx grompp -f nvt.mdp -c KF476003_em.gro -r KF476003_em.gro -p KF476003_topol.top -o KF476003_nvt.tpr
+gmx grompp -f nvt.mdp -c KF475987_em.gro -r KF475987_em.gro -p KF475987_topol.top -o KF475987_nvt.tpr
+gmx grompp -f nvt.mdp -c KF476021_em.gro -r KF476021_em.gro -p KF476021_topol.top -o KF476021_nvt.tpr
+gmx grompp -f nvt.mdp -c KF476022_em.gro -r KF476022_em.gro -p KF476022_topol.top -o KF476022_nvt.tpr
+gmx grompp -f nvt.mdp -c KF476014_em.gro -r KF476014_em.gro -p KF476014_topol.top -o KF476014_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM8654_em.gro -r ZDGM8654_em.gro -p ZDGM8654_topol.top -o ZDGM8654_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM4176_em.gro -r ZDGM4176_em.gro -p ZDGM4176_topol.top -o ZDGM4176_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM6438_em.gro -r ZDGM6438_em.gro -p ZDGM6438_topol.top -o ZDGM6438_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM7541_em.gro -r ZDGM7541_em.gro -p ZDGM7541_topol.top -o ZDGM7541_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM8624_em.gro -r ZDGM8624_em.gro -p ZDGM8624_topol.top -o ZDGM8624_nvt.tpr
+gmx grompp -f nvt.mdp -c ZDGM2008_em.gro -r ZDGM2008_em.gro -p ZDGM2008_topol.top -o ZDGM2008_nvt.tpr
+
+#Step 6: Equilibration (NVT)
+gmx mdrun -v -deffnm CHRONIC_nvt
+gmx mdrun -v -deffnm KF475983_nvt
+gmx mdrun -v -deffnm KF476023_nvt
+gmx mdrun -v -deffnm KF476003_nvt
+gmx mdrun -v -deffnm KF475987_nvt
+gmx mdrun -v -deffnm KF476021_nvt
+gmx mdrun -v -deffnm KF476022_nvt
+gmx mdrun -v -deffnm KF476014_nvt
+gmx mdrun -v -deffnm ZDGM8654_nvt
+gmx mdrun -v -deffnm ZDGM4176_nvt
+gmx mdrun -v -deffnm ZDGM6438_nvt
+gmx mdrun -v -deffnm ZDGM7541_nvt
+gmx mdrun -v -deffnm ZDGM8624_nvt
+gmx mdrun -v -deffnm ZDGM2008_nvt
+
+
+gmx grompp -f npt.mdp -c CHRONIC_nvt.gro -t CHRONIC_nvt.cpt -r CHRONIC_nvt.gro -p CHRONIC_topol.top -o CHRONIC_npt.tpr
+gmx grompp -f npt.mdp -c KF475983_nvt.gro -t KF475983_nvt.cpt -r KF475983_nvt.gro -p KF475983_topol.top -o KF475983_npt.tpr
+gmx grompp -f npt.mdp -c KF476023_nvt.gro -t KF476023_nvt.cpt -r KF476023_nvt.gro -p KF476023_topol.top -o KF476023_npt.tpr
+gmx grompp -f npt.mdp -c KF476003_nvt.gro -t KF476003_nvt.cpt -r KF476003_nvt.gro -p KF476003_topol.top -o KF476003_npt.tpr
+gmx grompp -f npt.mdp -c KF475987_nvt.gro -t KF475987_nvt.cpt -r KF475987_nvt.gro -p KF475987_topol.top -o KF475987_npt.tpr
+gmx grompp -f npt.mdp -c KF476021_nvt.gro -t KF476021_nvt.cpt -r KF476021_nvt.gro -p KF476021_topol.top -o KF476021_npt.tpr
+gmx grompp -f npt.mdp -c KF476022_nvt.gro -t KF476022_nvt.cpt -r KF476022_nvt.gro -p KF476022_topol.top -o KF476022_npt.tpr
+gmx grompp -f npt.mdp -c KF476014_nvt.gro -t KF476014_nvt.cpt -r KF476014_nvt.gro -p KF476014_topol.top -o KF476014_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM8654_nvt.gro -t ZDGM8654_nvt.cpt -r ZDGM8654_nvt.gro -p ZDGM8654_topol.top -o ZDGM8654_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM4176_nvt.gro -t ZDGM4176_nvt.cpt -r ZDGM4176_nvt.gro -p ZDGM4176_topol.top -o ZDGM4176_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM6438_nvt.gro -t ZDGM6438_nvt.cpt -r ZDGM6438_nvt.gro -p ZDGM6438_topol.top -o ZDGM6438_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM7541_nvt.gro -t ZDGM7541_nvt.cpt -r ZDGM7541_nvt.gro -p ZDGM7541_topol.top -o ZDGM7541_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM8624_nvt.gro -t ZDGM8624_nvt.cpt -r ZDGM8624_nvt.gro -p ZDGM8624_topol.top -o ZDGM8624_npt.tpr
+gmx grompp -f npt.mdp -c ZDGM2008_nvt.gro -t ZDGM2008_nvt.cpt -r ZDGM2008_nvt.gro -p ZDGM2008_topol.top -o ZDGM2008_npt.tpr
+
+#Step 7: # Equilibration (NPT) 
+gmx mdrun -v -deffnm CHRONIC_npt
+gmx mdrun -v -deffnm KF475983_npt
+gmx mdrun -v -deffnm KF476023_npt
+gmx mdrun -v -deffnm KF476003_npt
+gmx mdrun -v -deffnm KF475987_npt
+gmx mdrun -v -deffnm KF476021_npt
+gmx mdrun -v -deffnm KF476022_npt
+gmx mdrun -v -deffnm KF476014_npt
+gmx mdrun -v -deffnm ZDGM8654_npt
+gmx mdrun -v -deffnm ZDGM4176_npt
+gmx mdrun -v -deffnm ZDGM6438_npt
+gmx mdrun -v -deffnm ZDGM7541_npt
+gmx mdrun -v -deffnm ZDGM8624_npt
+gmx mdrun -v -deffnm ZDGM2008_npt
+
+
+gmx grompp -f md.mdp -c CHRONIC_npt.gro -t CHRONIC_npt.cpt -p CHRONIC_topol.top -o CHRONIC_md_0_30.tpr
+gmx grompp -f md.mdp -c KF475983_npt.gro -t KF475983_npt.cpt -p KF475983_topol.top -o KF475983_md_0_30.tpr
+gmx grompp -f md.mdp -c KF476023_npt.gro -t KF476023_npt.cpt -p KF476023_topol.top -o KF476023_md_0_30.tpr
+gmx grompp -f md.mdp -c KF476003_npt.gro -t KF476003_npt.cpt -p KF476003_topol.top -o KF476003_md_0_30.tpr
+gmx grompp -f md.mdp -c KF475987_npt.gro -t KF475987_npt.cpt -p KF475987_topol.top -o KF475987_md_0_30.tpr
+gmx grompp -f md.mdp -c KF476021_npt.gro -t KF476021_npt.cpt -p KF476021_topol.top -o KF476021_md_0_30.tpr
+gmx grompp -f md.mdp -c KF476022_npt.gro -t KF476022_npt.cpt -p KF476022_topol.top -o KF476022_md_0_30.tpr
+gmx grompp -f md.mdp -c KF476014_npt.gro -t KF476014_npt.cpt -p KF476014_topol.top -o KF476014_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM8654_npt.gro -t ZDGM8654_npt.cpt -p ZDGM8654_topol.top -o ZDGM8654_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM4176_npt.gro -t ZDGM4176_npt.cpt -p ZDGM4176_topol.top -o ZDGM4176_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM6438_npt.gro -t ZDGM6438_npt.cpt -p ZDGM6438_topol.top -o ZDGM6438_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM7541_npt.gro -t ZDGM7541_npt.cpt -p ZDGM7541_topol.top -o ZDGM7541_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM8624_npt.gro -t ZDGM8624_npt.cpt -p ZDGM8624_topol.top -o ZDGM8624_md_0_30.tpr
+gmx grompp -f md.mdp -c ZDGM2008_npt.gro -t ZDGM2008_npt.cpt -p ZDGM2008_topol.top -o ZDGM2008_md_0_30.tpr
+
+#Step 8: Production MD
+gmx mdrun -v -deffnm CHRONIC_md_0_30
+gmx mdrun -v -deffnm KF475983_md_0_30
+gmx mdrun -v -deffnm KF476023_md_0_30
+gmx mdrun -v -deffnm KF476003_md_0_30
+gmx mdrun -v -deffnm KF475987_md_0_30
+gmx mdrun -v -deffnm KF476021_md_0_30
+gmx mdrun -v -deffnm KF476022_md_0_30
+gmx mdrun -v -deffnm KF476014_md_0_30
+gmx mdrun -v -deffnm ZDGM8654_md_0_30
+gmx mdrun -v -deffnm ZDGM4176_md_0_30
+gmx mdrun -v -deffnm ZDGM6438_md_0_30
+gmx mdrun -v -deffnm ZDGM7541_md_0_30
+gmx mdrun -v -deffnm ZDGM8624_md_0_30
+gmx mdrun -v -deffnm ZDGM2008_md_0_30
