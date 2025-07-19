@@ -14,10 +14,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+"""
+URL configuration for LibraryProject project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.2/topics/http/urls/
+"""
+
 from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("books/", include("bookshelf.urls")),
     path('admin/', admin.site.urls),
+    path('', include('relationship_app.urls')),  # Routes root URL to your app
+    path('books/', include('bookshelf.urls')),   # Optional: only if you have another app called `bookshelf`
 ]
+
