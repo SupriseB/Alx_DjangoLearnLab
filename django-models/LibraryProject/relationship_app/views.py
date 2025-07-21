@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import user_passes_test
 from .models import Book, Library
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.forms import UserCreationForm
 
 
 # List all books (function-based view)
