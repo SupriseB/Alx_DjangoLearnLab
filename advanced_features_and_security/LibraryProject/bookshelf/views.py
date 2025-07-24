@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseForbidden
 from .models import Book
 from .forms import BookForm  # You’ll need to create this form if not already done.
+from .forms import ExampleForm
 
 # View all books — requires can_view permission
 @permission_required('yourapp.can_view', raise_exception=True)
