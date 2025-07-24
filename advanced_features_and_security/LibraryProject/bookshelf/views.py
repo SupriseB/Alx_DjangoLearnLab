@@ -42,3 +42,19 @@ def book_delete(request, pk):
         book.delete()
         return redirect('book_list')
     return render(request, 'books/book_confirm_delete.html', {'book': book})
+
+# SECURITY
+
+from django.shortcuts import render
+from .models import Book
+from .forms import SearchForm
+
+# Example: Safe search view using ORM and form validation
+def search_books(request):
+    form = SearchForm(request.GET)
+    results = []
+    if form.is_valid():
+        title_query = form.cleaned_data['title']
+        results = Book.objects.filter(title__icontains=title_query)
+    return render(request, 'books/book_search.html', {'form': form, 'results': results})
+
