@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*!!97(_fy2t+-=^h=+9p0rgbwac)0vgkl_o@)7bdnm6=4*i=d('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # Set to False in production
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']  # Set your production domain(s)
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bookshelf.apps.BookshelfConfig',
+    'csp',  # Added for Content Security Policy middleware
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',  # CSP Middleware added
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -100,8 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-#Custom Usermodel
-
+# Custom user model
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
@@ -109,11 +110,8 @@ AUTH_USER_MODEL = 'bookshelf.CustomUser'
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -122,47 +120,39 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-
-# SECURITY
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Set to False in production
-
-ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']  # Add your domain(s)
-
-# Prevent browser XSS protection bypass
-SECURE_BROWSER_XSS_FILTER = True
-
-# Prevent content type sniffing
-SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# Clickjacking protection
-X_FRAME_OPTIONS = 'DENY'  # Or 'SAMEORIGIN' if you need to embed
-
-# HTTPS cookie security
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
-# Additional best practices
-SECURE_HSTS_SECONDS = 31536000  # Enforce HTTPS for 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
-
-# Content Security Policy (CSP) headers (optional)
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", 'https://trusted.cdn.com')
-CSP_STYLE_SRC = ("'self'", 'https://trusted.cdn.com')
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-DEBUG = False  # Disables detailed error pages in production for security
-CSRF_COOKIE_SECURE = True  # Prevents CSRF cookie from being sent over HTTP
-SESSION_COOKIE_SECURE = True  # Prevents session cookie from being sent over HTTP
-SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browser
+# ───────────────────────────────────────────────────────
+# SECURITY CONFIGURATION
+# ───────────────────────────────────────────────────────
 
+# Redirect all HTTP to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Use HSTS to enforce HTTPS in compliant browsers
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Cookies only sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Prevent content sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser XSS protection
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent clickjacking by disallowing iframe embedding
+X_FRAME_OPTIONS = 'DENY'
+
+# Content Security Policy settings
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'https://trusted.cdn.com')
+CSP_STYLE_SRC = ("'self'", 'https://trusted.cdn.com')
