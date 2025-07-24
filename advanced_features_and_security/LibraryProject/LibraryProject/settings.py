@@ -100,6 +100,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+#Custom Usermodel
+
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
