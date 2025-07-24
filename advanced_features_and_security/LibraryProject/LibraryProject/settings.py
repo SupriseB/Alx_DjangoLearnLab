@@ -125,4 +125,37 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
+
+# SECURITY
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False  # Set to False in production
+
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']  # Add your domain(s)
+
+# Prevent browser XSS protection bypass
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent content type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Clickjacking protection
+X_FRAME_OPTIONS = 'DENY'  # Or 'SAMEORIGIN' if you need to embed
+
+# HTTPS cookie security
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Additional best practices
+SECURE_HSTS_SECONDS = 31536000  # Enforce HTTPS for 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
+
+# Content Security Policy (CSP) headers (optional)
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'https://trusted.cdn.com')
+CSP_STYLE_SRC = ("'self'", 'https://trusted.cdn.com')
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
