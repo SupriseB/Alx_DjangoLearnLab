@@ -159,3 +159,10 @@ CSP_STYLE_SRC = ("'self'", 'https://trusted.cdn.com')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+DEBUG = False  # Disables detailed error pages in production for security
+CSRF_COOKIE_SECURE = True  # Prevents CSRF cookie from being sent over HTTP
+SESSION_COOKIE_SECURE = True  # Prevents session cookie from being sent over HTTP
+SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browser
+
