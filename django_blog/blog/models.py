@@ -1,10 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth import get_user_model
-
-# Get the User model (future-proof if a custom user model is used)
-User = get_user_model()
-
+from django.contrib.auth.models import User
 
 """
     Represents an author in the blog system.
