@@ -32,6 +32,8 @@ urlpatterns = [
     path('comments/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
     path('comments/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
     path("comment/<int:pk>/update/", "post/<int:pk>/comments/new/", "comment/<int:pk>/delete/"),
+    path('search/', views.blog_search, name='blog-search'),
+    path('tags/<str:tag_name>/', views.blog_by_tag, name='blog-by-tag'),
 
 ]
 
