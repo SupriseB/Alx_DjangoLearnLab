@@ -6,9 +6,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
+from django.db.models import Q
 
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, BlogForm, CommentForm
-from .models import Blog, Author, Comment
+from .models import Blog as Post, Author, Comment
+from taggit.models import Tag
 
 
 # --------------------------
@@ -32,7 +34,7 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # log in after registration
+            login(request, user)
             messages.success(request, 'Welcome! Your account has been created.')
             return redirect('profile')
         else:
@@ -47,11 +49,7 @@ def register(request):
 def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(
-            request.POST,
-            request.FILES,
-            instance=request.user.profile
-        )
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
@@ -64,10 +62,7 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
 
-    return render(request, 'account/profile.html', {
-        'u_form': u_form,
-        'p_form': p_form,
-    })
+    return render(request, 'account/profile.html', {'u_form': u_form, 'p_form': p_form})
 
 
 # --------------------------
@@ -75,14 +70,14 @@ def profile(request):
 # --------------------------
 
 class BlogListView(ListView):
-    model = Blog
+    model = Post
     template_name = "blog/blog_list.html"
     context_object_name = "blogs"
     ordering = ["-published_date"]
 
 
 class BlogDetailView(DetailView):
-    model = Blog
+    model = Post
     template_name = "blog/blog_detail.html"
 
     def get_context_data(self, **kwargs):
@@ -93,7 +88,7 @@ class BlogDetailView(DetailView):
 
 
 class BlogCreateView(LoginRequiredMixin, CreateView):
-    model = Blog
+    model = Post
     form_class = BlogForm
     template_name = "blog/blog_form.html"
 
@@ -106,7 +101,7 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
 
 
 class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Blog
+    model = Post
     form_class = BlogForm
     template_name = "blog/blog_form.html"
 
@@ -120,7 +115,7 @@ class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Blog
+    model = Post
     template_name = "blog/blog_confirm_delete.html"
     success_url = reverse_lazy("blog-list")
 
@@ -138,7 +133,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     form_class = CommentForm
 
     def form_valid(self, form):
-        blog = get_object_or_404(Blog, pk=self.kwargs["pk"])
+        blog = get_object_or_404(Post, pk=self.kwargs["pk"])
         form.instance.post = blog
         form.instance.author = self.request.user
         messages.success(self.request, "Comment added successfully!")
@@ -176,28 +171,24 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse("blog-detail", kwargs={"pk": self.object.post.pk})
 
-#Developing search functionality
 
-from django.db.models import Q
-from django.shortcuts import render, get_object_or_404
-from .models import Blog
-from taggit.models import Tag
+# --------------------------
+# Tagging and Search Views
+# --------------------------
 
-# Search view
 def blog_search(request):
     query = request.GET.get('q')
     results = []
     if query:
-        results = Blog.objects.filter(
+        results = Post.objects.filter(
             Q(title__icontains=query) |
             Q(content__icontains=query) |
             Q(tags__name__icontains=query)
         ).distinct()
     return render(request, 'blog/blog_search.html', {'query': query, 'results': results})
 
-# Filter by tag view
+
 def blog_by_tag(request, tag_name):
     tag = get_object_or_404(Tag, name=tag_name)
-    blogs = Blog.objects.filter(tags__in=[tag])
+    blogs = Post.objects.filter(tags__in=[tag])
     return render(request, 'blog/blog_by_tag.html', {'tag': tag, 'blogs': blogs})
-
