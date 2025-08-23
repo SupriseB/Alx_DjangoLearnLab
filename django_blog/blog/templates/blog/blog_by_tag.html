@@ -1,0 +1,10 @@
+<h2>Posts tagged with "{{ tag.name }}"</h2>
+{% if blogs %}
+  <ul>
+    {% for blog in blogs %}
+      <li><a href="{% url 'blog-detail' blog.pk %}">{{ blog.title }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No posts with this tag yet.</p>
+{% endif %}
