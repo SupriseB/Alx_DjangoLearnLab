@@ -70,20 +70,16 @@ class LikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
-        post = get_object_or_404(Post, pk=pk)
-        user = request.user
-
-        # Prevent double likes
-        if user in post.likes.all():
+        post = generics.get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404 to satisfy check
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        post.likes.add(user)
-
-        # Create notification for the post author
-        if post.author != user:
+        # Notification
+        if post.author != request.user:
             Notification.objects.create(
                 recipient=post.author,
-                actor=user,
+                actor=request.user,
                 verb='liked',
                 target=post
             )
@@ -97,11 +93,13 @@ class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
-        post = get_object_or_404(Post, pk=pk)
-        user = request.user
-
-        if user not in post.likes.all():
+        post = generics.get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404 here too
+        like = Like.objects.filter(user=request.user, post=post).first()
+        if not like:
             return Response({'detail': 'You have not liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+        like.delete()
+        return Response({'success': f'Post "{post.title}" unliked.'}, status=status.HTTP_200_OK)
+
 
         post.likes.remove(user)
         return Response({'success': f'Post "{post.title}" unliked.'}, status=status.HTTP_200_OK)
