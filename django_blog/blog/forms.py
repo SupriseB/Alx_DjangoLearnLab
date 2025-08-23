@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Blog
+from .models import Profile, Blog, Comment
+from taggit.forms import TagWidget
+
 
 # --------------------------
 # User and Profile Forms
@@ -37,23 +39,23 @@ class ProfileUpdateForm(forms.ModelForm):
 
 
 # --------------------------
-# Blog Form (for CRUD posts)
+# Blog Form (for CRUD posts + tags)
 # --------------------------
 
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter blog title'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write your content here...'}),
-
-        
+            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),
         }
-#Comment forms
 
-from django import forms
-from .models import Comment
+
+# --------------------------
+# Comment Form
+# --------------------------
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -62,17 +64,3 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Write your comment...'})
         }
-#for Tags
-from django import forms
-from .models import Blog
-from taggit.forms import TagWidget
-
-class BlogForm(forms.ModelForm):
-    class Meta:
-        model = Blog
-        fields = ['title', 'content', 'tags']
-        widgets = {
-            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),
-        }
-
-
