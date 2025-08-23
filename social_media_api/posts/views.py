@@ -3,8 +3,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
+from notifications.models import Notification
 
 # -------------------------
 # Permissions: Only allow owners to edit/delete
@@ -66,11 +67,19 @@ def feed(request):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
-    if user in post.likes.all():
-        return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
-    post.likes.add(user)
+    post = get_object_or_404(Post, pk=post_id)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        return Response({'detail': 'Already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Create notification
+    if post.author != request.user:
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb='liked',
+            target=post
+        )
     return Response({'success': f'Post "{post.title}" liked.'}, status=status.HTTP_200_OK)
 
 # -------------------------
@@ -79,9 +88,10 @@ def like_post(request, post_id):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def unlike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
-    if user not in post.likes.all():
+    post = get_object_or_404(Post, pk=post_id)
+    try:
+        like = Like.objects.get(user=request.user, post=post)
+        like.delete()
+        return Response({'success': f'Post "{post.title}" unliked.'}, status=status.HTTP_200_OK)
+    except Like.DoesNotExist:
         return Response({'detail': 'You have not liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
-    post.likes.remove(user)
-    return Response({'success': f'Post "{post.title}" unliked.'}, status=status.HTTP_200_OK)
