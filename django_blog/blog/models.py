@@ -63,4 +63,16 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
+        
+from taggit.managers import TaggableManager
 
+class Blog(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    published_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey('Author', on_delete=models.CASCADE)
+
+    tags = TaggableManager()  # NEW
+
+    def __str__(self):
+        return self.title
