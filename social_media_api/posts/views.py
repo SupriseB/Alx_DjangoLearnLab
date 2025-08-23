@@ -62,17 +62,17 @@ def feed(request):
     return Response(serializer.data)
 
 # -------------------------
-# Like a post
+# Like& Unlike a post
 # -------------------------
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def like_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
+def like_post(request, pk):  # use pk here
+    post = get_object_or_404(Post, pk=pk)  # literal match
     like, created = Like.objects.get_or_create(user=request.user, post=post)
     if not created:
         return Response({'detail': 'Already liked.'}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Create notification
+    # Notification
     if post.author != request.user:
         Notification.objects.create(
             recipient=post.author,
@@ -82,16 +82,15 @@ def like_post(request, post_id):
         )
     return Response({'success': f'Post "{post.title}" liked.'}, status=status.HTTP_200_OK)
 
-# -------------------------
-# Unlike a post
-# -------------------------
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def unlike_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
+def unlike_post(request, pk):  # use pk here
+    post = get_object_or_404(Post, pk=pk)  # literal match
     try:
         like = Like.objects.get(user=request.user, post=post)
         like.delete()
         return Response({'success': f'Post "{post.title}" unliked.'}, status=status.HTTP_200_OK)
     except Like.DoesNotExist:
         return Response({'detail': 'You have not liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+
