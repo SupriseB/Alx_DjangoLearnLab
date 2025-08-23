@@ -1,0 +1,7 @@
+<p><strong>Tags:</strong>
+  {% for tag in blog.tags.all %}
+    <a href="{% url 'blog-by-tag' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No tags
+  {% endfor %}
+</p>
