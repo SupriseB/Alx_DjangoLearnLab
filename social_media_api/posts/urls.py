@@ -12,6 +12,7 @@ urlpatterns = [
     path('feed/', feed, name='feed'),               # Feed endpoint
     path('posts/<int:post_id>/like/', like_post, name='like-post'),   # Like a post
     path('posts/<int:post_id>/unlike/', unlike_post, name='unlike-post'), # Unlike a post
+    path('"<int:pk>/like/", "<int:pk>/unlike/"),
 ]
 
 # Include router URLs
