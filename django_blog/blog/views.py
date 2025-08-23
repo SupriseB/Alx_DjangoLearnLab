@@ -2,9 +2,18 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
+from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, BlogForm
+from .models import Blog, Author
+
+
+# --------------------------
+# Authentication Views
+# --------------------------
 
 class BlogLoginView(LoginView):
     template_name = 'registration/login.html'
@@ -59,3 +68,57 @@ def profile(request):
         'u_form': u_form,
         'p_form': p_form,
     })
+
+
+# --------------------------
+# Blog CRUD Views
+# --------------------------
+
+class BlogListView(ListView):
+    model = Blog
+    template_name = "blog/blog_list.html"
+    context_object_name = "blogs"
+    ordering = ["-published_date"]
+
+
+class BlogDetailView(DetailView):
+    model = Blog
+    template_name = "blog/blog_detail.html"
+
+
+class BlogCreateView(LoginRequiredMixin, CreateView):
+    model = Blog
+    form_class = BlogForm
+    template_name = "blog/blog_form.html"
+
+    def form_valid(self, form):
+        # Link the logged-in user to the Author profile
+        author, created = Author.objects.get_or_create(user=self.request.user, defaults={
+            "name": self.request.user.username
+        })
+        form.instance.author = author
+        return super().form_valid(form)
+
+
+class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Blog
+    form_class = BlogForm
+    template_name = "blog/blog_form.html"
+
+    def form_valid(self, form):
+        form.instance.author = self.get_object().author
+        return super().form_valid(form)
+
+    def test_func(self):
+        blog = self.get_object()
+        return self.request.user == blog.author.user
+
+
+class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Blog
+    template_name = "blog/blog_confirm_delete.html"
+    success_url = reverse_lazy("blog-list")
+
+    def test_func(self):
+        blog = self.get_object()
+        return self.request.user == blog.author.user
