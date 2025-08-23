@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.urls import reverse
 
 """
     Represents an author in the blog system.
@@ -8,7 +8,11 @@ from django.contrib.auth.models import User
     Additional author details (e.g., bio, profile picture) can be stored here.
 """
 class Author(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author_profile")
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="author_profile"
+    )
     name = models.CharField(max_length=255, help_text="The author's full name")
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
@@ -27,14 +31,22 @@ class Profile(models.Model):
 
 
 """
-    Represents a blog with a title, content, publication date, and an associated author.
-    The 'author' field creates a One-to-Many relationship from Author to Blogs.
+    Represents a blog post with a title, content, publication date, and an associated author.
+    The 'author' field creates a One-to-Many relationship from Author to Blog.
 """
 class Blog(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)   # track edits
     author = models.ForeignKey(Author, related_name='blogs', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ["-published_date"]
 
     def __str__(self):
         return f"{self.title} by {self.author.name} on {self.published_date:%Y-%m-%d}"
+
+    def get_absolute_url(self):
+        # this allows Django to redirect to the detail page after create/update
+        return reverse("blog-detail", kwargs={"pk": self.pk})
